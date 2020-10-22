@@ -10,6 +10,14 @@
 
 %%
 
+// skip whitespace
+[\n\t]+			; //ignore
+[[:space:]]+	; //ignore
+
+
+
+// match keywords
+
 "void"			return VOID;
 "int"			return INT;
 "double"		return DOUBLE;
@@ -41,6 +49,20 @@
 "protected"		return PROTECTED;
 "public"		return PUBLIC;
 
-. /*ignore*/ ;
+
+// match identifiers
+
+[a-zA-Z][a-zA-Z0-9_]*		return IDENTIFIER;
+
+"+"			return PLUS;
+"-"			return MINUS;
+"*"			return STAR;
+"/"			return SLASH;
+"%"			return PERCENT;
+
+
+
+// any other case is an error
+.  				return ERR;
 
 %% 

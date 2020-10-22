@@ -1,3 +1,5 @@
+#define ERR -1
+
 #define VOID 1
 #define INT 2
 #define DOUBLE 3
@@ -14,18 +16,24 @@
 #define IF 14
 #define ELSE 15
 #define RETURN 16
-#define RETURN 17
-#define BREAK 18
-#define CONTINUE 19
-#define NEW 20
-#define NEWaRRAY 21
-#define PRINT 22
-#define READINTEGER 23
-#define READLINE 24
-#define DTOI 25
-#define ITOD 26
-#define BTOI 27
-#define ITOB 28
-#define PRIVATE 29
-#define PROTECTED 30
-#define PUBLIC 31
+#define BREAK 17
+#define CONTINUE 18
+#define NEW 19
+#define NEWARRAY 20
+#define PRINT 21
+#define READINTEGER 22
+#define READLINE 23
+#define DTOI 24
+#define ITOD 25
+#define BTOI 26
+#define ITOB 27
+#define PRIVATE 28
+#define PROTECTED 29
+#define PUBLIC 30
+
+#define IDENTIFIER 31
+#define PLUS 32
+#define MINUS 33
+#define STAR 34
+#define SLASH 35
+#define PERCENT 36
