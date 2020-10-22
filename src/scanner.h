@@ -62,3 +62,4 @@
 #define RIGHTCURLY 57
 
 #define AND 58
+#define DOT 59

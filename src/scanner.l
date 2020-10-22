@@ -90,6 +90,7 @@
 ")"			return RPARANTHES;
 "{"			return LEFTCURLY;
 "}"			return RIGHTCURLY;
+"."  			return DOT;
 
 
 
