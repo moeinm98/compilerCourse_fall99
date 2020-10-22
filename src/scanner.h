@@ -7,7 +7,7 @@
 #define STRING 5
 #define CLASS 6
 #define INTERFACE 7
-#define NULL 8
+#define TNULL 8
 #define THIS 9
 #define EXTEND 10
 #define IMPLEMENTS 11
@@ -57,3 +57,8 @@
 #define DOUBLELITERAL 53
 #define STRINGLITERAL 54
 #define BOOLEANLITERAL 55
+
+#define LEFTCURLY 56
+#define RIGHTCURLY 57
+
+#define AND 58

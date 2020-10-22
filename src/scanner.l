@@ -2,7 +2,7 @@
 %option header-file="lex.yy.h"
 
 %{
-#include <iostream>
+#include <stdio.h>
 #include "scanner.h"
 
 #define YY_DECL int yylex()
@@ -10,18 +10,19 @@
 
 %%
 
-// skip whitespace
+	/* skip whitespace */
 [\n\t]+			; //ignore
 [[:space:]]+	; //ignore
 
 
-// skip comments
-"//".*										; //single line
+	/* skip comments */
+
+"//".*										; //single lßine
 [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]			; //multiple line
 
 
 
-// match keywords
+	/* match keywords */
 
 "void"			return VOID;
 "int"			return INT;
@@ -30,10 +31,10 @@
 "string"		return STRING;
 "class"			return CLASS;
 "interface"		return INTERFACE;
-"null"			return NULL;
+"null"			return TNULL;
 "this"			return THIS;
-"extend"		return EXTEND;
-"implements"	return IMPLEMENTs;
+"extends"		return EXTEND;
+"implements"	return IMPLEMENTS;
 "for"			return FOR;
 "while"			return WHILE;
 "if"			return IF;
@@ -50,17 +51,21 @@
 "itod"			return ITOD;
 "btoi"			return BTOI;
 "itob"			return ITOB;
-"private"		return PRiVATE;
+"private"		return PRIVATE;
 "protected"		return PROTECTED;
 "public"		return PUBLIC;
 
 
-// match identifiers
+	/* match booleans */
+(true|false)								return BOOLEANLITERAL;
+
+
+	/* match identifiers */
 
 [a-zA-Z][a-zA-Z0-9_]*		return IDENTIFIER; //todo return the name of the identifier
 
 
-// match Operators
+	/*  match Operators */
 "+"			return PLUS;
 "-"			return MINUS;
 "*"			return STAR;
@@ -70,11 +75,12 @@
 ">"			return GREATER;
 "<"			return LESS;
 "<="		return GREATEREQ;
-">="		retrun LESSEQ;
+">="		return LESSEQ;
 "="			return EQUAL;
-"=="		retrun EQUALEQ;
+"=="		return EQUALEQ;
 "!="		return NOTEQUAL;
 "||"		return OR;
+"&&"		return AND;
 "!"			return NOT;
 ";"			return SEMOCOLON;
 ","			return COMMA;
@@ -82,18 +88,20 @@
 "]"			return RBRACKET;
 "("			return LPARANTHES;
 ")"			return RPARANTHES;
+"{"			return LEFTCURLY;
+"}"			return RIGHTCURLY;
 
 
 
-// match Numbers todo: return the literal string or number
+	/* match Numbers todo: return the literal string or number */
 [0-9]+										return INTLITERAL;
 0[xX][0-9a-fA-F]+							return INTLITERAL;
-[0-9]+\.?[0-9]*([Ee][-+][0-9]+)?			return DOUBLELITERAL;
+[0-9]+\.?[0-9]*([Ee][-+]?[0-9]+)?			return DOUBLELITERAL;
 \"(\\.|[^"\\])*\"							return STRINGLITERAL;
-(true|false)								return BOOLEANLITERAL;
 
 
-// any other case is an error
+
+	/* any other case is an error */
 .  				return ERR;
 
 %% 
