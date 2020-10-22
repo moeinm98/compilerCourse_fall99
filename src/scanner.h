@@ -37,3 +37,23 @@
 #define STAR 34
 #define SLASH 35
 #define PERCENT 36
+#define GREATER 37
+#define LESS 38
+#define GREATEREQ 39
+#define LESSEQ 40
+#define EQUAL 41
+#define EQUALEQ 42
+#define NOTEQUAL 43
+#define OR 44
+#define NOT 45
+#define SEMOCOLON 46
+#define COMMA 47
+#define LBRACKET 48
+#define RBRACKET 49
+#define LPARANTHES 50
+#define RPARANTHES 51
+
+#define INTLITERAL 52
+#define DOUBLELITERAL 53
+#define STRINGLITERAL 54
+#define BOOLEANLITERAL 55
