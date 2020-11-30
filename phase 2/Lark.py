@@ -2,70 +2,77 @@ from lark import Lark
 from lark.indenter import Indenter
 
 tree_grammar = r"""
-    ?Program : Decl+
+    ?program : decl+
 
-    Decl : VariableDecl | FunctionDecl | ClassDecl | InterfaceDecl
+    decl : variabledecl | functiondecl | classdecl | interfacedecl
 
-    VariableDecl : Variable ";"
+    variabledecl : variable ";"
 
-    Variable : Type IDENTIFIER
+    variable : type IDENTIFIER
 
-    Type : INT | DOUBLE | BOOL | STRING | IDENTIFIER | Type "[" "]"
+    type : INT | DOUBLE | BOOL | STRING | IDENTIFIER | type "[" "]"
 
-    FunctionDecl : Type IDENTIFIER "(" Formals")" StmtBlock | VOID IDENTIFIER "(" Formals ")" StmtBlock
+    functiondecl : type IDENTIFIER "(" formals")" stmtblock | VOID IDENTIFIER "(" formals ")" stmtblock
 
-    Formals : (Variable ",")* Variable | "null"
+    formals : (variable ",")* variable | "null"
 
-    ClassDecl : class IDENTIFIER (EXTEND IDENTIFIER)? (IMPLEMENTS (IDENTIFIER "," )* IDENTIFIER)? "{" Field* "}"
+    classdecl : "class" IDENTIFIER (EXTEND IDENTIFIER)? (IMPLEMENTS (IDENTIFIER "," )* IDENTIFIER)? "{" field* "}"
 
-    Field : AccessMode VariableDecl | AccessMode FunctionDecl
+    field : accessMode variabledecl | accessmode functiondecl
 
-    AccessMode : PRIVATE | PROTECTED | PUBLIC | "null"
+    accessmode : PRIVATE | PROTECTED | PUBLIC | "null"
 
-    InterfaceDecl : INTERFACE IDENTIFIER {Prototype*}
+    interfacedecl : INTERFACE IDENTIFIER "{"prototype*"}"
 
-    Prototype : Type IDENTIFIER "(" Formals ")" ";"
-    | VOID IDENTIFIER "(" Formals ")" ";"
+    prototype : type IDENTIFIER "(" formals ")" ";"
+    | VOID IDENTIFIER "(" formals ")" ";"
 
-    StmtBlock : "{" VariableDecl* Stmt* "}"
+    stmtblock : "{" variabledecl* stmt* "}"
 
-    Stmt : Expr? ";" | IfStmt | WhileStmt | ForStmt
-    | BreakStmt | ContinueStmt | ReturnStmt | PrintStmt | StmtBlock
+    stmt : expr? ";" | ifstmt | whilestmt | forstmt
+    | breakstmt | continuestmt | returnstmt | printstmt | stmtblock
 
-    IfStmt : if "(" Expr ")" Stmt (ELSE Stmt)?
+    ifstmt : if "(" expr ")" stmt (ELSE stmt)?
 
-    WhileStmt : WHILE "(" Expr ")" Stmt
+    whilestmt : WHILE "(" expr ")" stmt
 
-    ForStmt : FOR "(" Expr* ";" Expr ";" Expr* ")" Stmt
+    forstmt : FOR "(" expr* ";" expr ";" expr* ")" stmt
 
-    ReturnStmt : RETURM (Expr)? ";"
+    returnstmt : RETURM (expr)? ";"
 
-    BreakStmt : BREAK";"
+    breakstmt : BREAK";"
 
-    ContinueStmt : CONTINUE ";"
+    continuestmt : CONTINUE ";"
 
-    PrintStmt : PRINT "(" (Expr ",")* Expr ")" ";"
+    printstmt : PRINT "(" (expr ",")* expr ")" ";"
 
-    Expr : LValue = Expr | Constant | LValue | THIS | Call | (Expr)
-    | Expr PLUS Expr | Expr MINUS Expr | Expr STAR Expr | Expr SLASH Expr
-    | Expr PERCENT Expr | MINUS Expr | Expr LESS Expr | Expr GREATEREQ Expr
-    | Expr GREATER Expr | Expr LESSEQ Expr | Expr EQUALEQ Expr | Expr NOTEQUAL Expr
-    | Expr AND Expr | Expr OR Expr | NOT Expr | READINTEGER "(" ")"
-    | READLINE"(" ")" | NEW IDENTIFIER | NEWARRAY "(" Expr "," Type ")"
-    | ITOD "(" Expr ")" | DTOI"(" Expr ")" | ITOB "(" Expr ")" | BTOI"(" Expr ")"
+    expr : lvalue "=" expr | constant | lvalue | THIS | call | (expr)
+    | expr PLUS expr | expr MINUS expr | expr STAR expr | expr SLASH expr
+    | expr PERCENT expr | MINUS expr | expr LESS expr | expr GREATEREQ expr
+    | expr GREATER expr | expr LESSEQ expr | expr EQUALEQ expr | expr NOTEQUAL expr
+    | expr AND expr | expr OR expr | NOT expr | READINTEGER "(" ")"
+    | READLINE"(" ")" | NEW IDENTIFIER | NEWARRAY "(" expr "," type ")"
+    | ITOD "(" expr ")" | DTOI"(" expr ")" | ITOB "(" expr ")" | BTOI"(" expr ")"
 
-    LValue : IDENTIFIER | Expr "." IDENTIFIER | Expr "[" Expr "]"
+    lvalue : IDENTIFIER | expr "." IDENTIFIER | expr "[" expr "]"
 
-    Call : IDENTIFIER "(" Actuals ")" | Expr "." IDENTIFIER "(" Actuals ")"
+    call : IDENTIFIER "(" actuals ")" | expr "." IDENTIFIER "(" actuals ")"
 
-    Actuals : (Expr ",")* Expr | "null"
+    actuals : (expr ",")* expr | "null"
 
-    Constant : intConstant | doubleConstant | boolConstant | stringConstant | "null"
+    constant : intconstant | doubleconstant | boolconstant | stringconstant | "null"
 """
 
+class TreeIndenter(Indenter):
+    NL_type = '_NL'
+    OPEN_PAREN_types = []
+    CLOSE_PAREN_types = []
+    INDENT_type = '_INDENT'
+    DEDENT_type = '_DEDENT'
+    tab_len = 8
 
+parser = Lark(tree_grammar, parser='lalr', postlex=TreeIndenter())
 
-parser = Lark(tree_grammar, parser='lalr')
 
 test_tree = """
 class Main{
@@ -77,4 +84,28 @@ class Main{
 }‬
 """
 
-print(parser.parse(test_tree).pretty())
+tree = r"""
+    ?start: _NL* tree
+
+    tree: NAME _NL [_INDENT tree+ _DEDENT]
+
+    %import common.CNAME -> NAME
+    %import common.WS_INLINE
+    %declare _INDENT _DEDENT
+    %ignore WS_INLINE
+
+    _NL: /(\r?\n[\t ]*)+/
+"""
+test = """
+a
+    b
+    c
+        d
+        e
+    f
+        g
+"""
+
+parser = Lark(tree, parser='lalr', postlex=TreeIndenter())
+
+print(parser.parse(test).pretty())
